@@ -11,6 +11,10 @@
 		E11CA5152621A74B00812157 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11CA5142621A74B00812157 /* ViewController.swift */; };
 		E11CA5172621A74F00812157 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E11CA5162621A74F00812157 /* Assets.xcassets */; };
 		E11CA51A2621A74F00812157 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E11CA5182621A74F00812157 /* Main.storyboard */; };
+		E179DD442626E751001948E4 /* VersesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E179DD432626E751001948E4 /* VersesView.swift */; };
+		E179DD452626E751001948E4 /* VersesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E179DD432626E751001948E4 /* VersesView.swift */; };
+		E179DD482626F396001948E4 /* wavesColors.json in Resources */ = {isa = PBXBuildFile; fileRef = E1FA699A26218A2B006F7737 /* wavesColors.json */; };
+		E179DD4B2626F399001948E4 /* shici.json in Resources */ = {isa = PBXBuildFile; fileRef = E1FA699926218A2B006F7737 /* shici.json */; };
 		E18A82892625BC9C005C2495 /* jizhi_saverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D7F2C6261C2A2500FF0CC3 /* jizhi_saverView.swift */; };
 		E18A828C2625BCA0005C2495 /* PerlinNoise.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FA699626217E2B006F7737 /* PerlinNoise.swift */; };
 		E1D7F2C7261C2A2600FF0CC3 /* jizhi_saverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D7F2C6261C2A2500FF0CC3 /* jizhi_saverView.swift */; };
@@ -27,6 +31,7 @@
 		E11CA5192621A74F00812157 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		E11CA51B2621A74F00812157 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E11CA51C2621A74F00812157 /* debugview.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = debugview.entitlements; sourceTree = "<group>"; };
+		E179DD432626E751001948E4 /* VersesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersesView.swift; sourceTree = "<group>"; };
 		E1D7F2B8261C29AB00FF0CC3 /* jizhi_saver.saver */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = jizhi_saver.saver; sourceTree = BUILT_PRODUCTS_DIR; };
 		E1D7F2BF261C29AB00FF0CC3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E1D7F2C6261C2A2500FF0CC3 /* jizhi_saverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = jizhi_saverView.swift; sourceTree = "<group>"; };
@@ -91,6 +96,7 @@
 				E1FA699A26218A2B006F7737 /* wavesColors.json */,
 				E1D7F2BF261C29AB00FF0CC3 /* Info.plist */,
 				E1D7F2C6261C2A2500FF0CC3 /* jizhi_saverView.swift */,
+				E179DD432626E751001948E4 /* VersesView.swift */,
 				E1FA699626217E2B006F7737 /* PerlinNoise.swift */,
 			);
 			path = jizhi_saver;
@@ -187,6 +193,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				E11CA5172621A74F00812157 /* Assets.xcassets in Resources */,
+				E179DD482626F396001948E4 /* wavesColors.json in Resources */,
+				E179DD4B2626F399001948E4 /* shici.json in Resources */,
 				E11CA51A2621A74F00812157 /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -210,6 +218,7 @@
 				E18A828C2625BCA0005C2495 /* PerlinNoise.swift in Sources */,
 				E11CA5152621A74B00812157 /* ViewController.swift in Sources */,
 				E18A82892625BC9C005C2495 /* jizhi_saverView.swift in Sources */,
+				E179DD452626E751001948E4 /* VersesView.swift in Sources */,
 				E11CA5132621A74B00812157 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -218,6 +227,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E179DD442626E751001948E4 /* VersesView.swift in Sources */,
 				E1D7F2C7261C2A2600FF0CC3 /* jizhi_saverView.swift in Sources */,
 				E1FA699726217E2B006F7737 /* PerlinNoise.swift in Sources */,
 			);

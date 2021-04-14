@@ -23,71 +23,96 @@ class jizhi_saverView: ScreenSaverView {
     }
     
     private var mountains: [Mountain] = [];
-    private var mountain_layers: [CAShapeLayer] = [];
     private var height: CGFloat = 0.0;
     private var width: CGFloat = 0.0;
     private var first_run: Bool = true;
     private var is_dark_mode: Bool = false;
     
-    private let verses_label = NSTextField();
-    private let poem_label = NSTextField();
-    private let author_label = NSTextField();
+    private var verses_list: [Verses] = [];
+    private var verses_view: VersusView;
     private let color_label = NSTextField();
     
-    private var wave_color: NSColor = NSColor(red: 31.0/255, green: 32.0/255, blue: 64.0/255, alpha: 1.0);
-    private var color_name: String = "晶\n石\n紫";
+    private var wave_colors: [WaveColor] = [];
+    private var wave_color: WaveColor = WaveColor.defaultColor;
+    
     private var font_name: String = "jiangxizhuokai-Regular";
-    private var verses_str: String = "况夜鸟、啼绝四更头，边声起。";
-    private var poem_str: String = "「满江红·代北燕南」";
-    private var author_str: String = "纳兰性德";
+    
+    struct WaveColor {
+        var name : String;
+        var red, green, blue: Int;
+        
+        var lightSuitable: Bool = true;
+        var darkSuitable: Bool = true;
+        
+        static let defaultColor = WaveColor(name: "晶石紫", red: 31, green: 32, blue: 64);
+        
+        func getColor() -> NSColor {
+            return NSColor(red: CGFloat(red)/255, green: CGFloat(green)/255, blue: CGFloat(blue)/255, alpha: 1.0);
+        }
+        
+        func getNameLines() -> String {
+            return Array(name).map(String.init).joined(separator: "\n")
+        }
+    }
+    
+    struct Verses {
+        var verses: String;
+        var title: String;
+        var author: String;
+        
+        static let defaultVerses = Verses(verses: "况夜鸟、啼绝四更头，边声起。", title: "「满江红·代北燕南」", author: "纳兰性德")
+    }
    
     class Mountain {
         let c : NSColor;
         var y : CGFloat=0.0;
         var offset: CGFloat=0.0;
         var t : CGFloat = 0.0;
+        var layer: CAShapeLayer
         
-        init(color: NSColor, y: CGFloat) {
+        init(color: NSColor, y: CGFloat, layer: CAShapeLayer) {
             self.c = color;
             self.y = y;
             self.offset = CGFloat.random(in: 100...200);
             self.t = 0.0;
+            self.layer = layer;
         }
     }
     
     // MARK: - Initialization
     override init?(frame: NSRect, isPreview: Bool) {
+        self.verses_view = VersusView(frame: NSRect(origin: CGPoint(x: 0, y: 0.7*frame.height),
+                                                    size: CGSize(width: frame.width, height: 0.05*frame.width)),
+                                      verses: Verses.defaultVerses.verses,
+                                      from: Verses.defaultVerses.title,
+                                      by: Verses.defaultVerses.author,
+                                      isDarkMode: is_dark_mode,
+                                      font: font_name)
+        self.verses_view.autoresizingMask = [.width, .minYMargin, .maxYMargin, .height]
         
         super.init(frame: frame, isPreview: isPreview)
         
         self.recordWidthHeight()
         
         self.wantsLayer = true;
-        
         let layer = CALayer()
         layer.frame = frame
         layer.backgroundColor = is_dark_mode ? Constants.background_dark.cgColor : Constants.background_light.cgColor;
         self.layer = layer
-        for i in 0..<5 {
-            let mlayer = CAShapeLayer()
-            mlayer.frame = CGRect(x: 0, y: 0, width: frame.width,
-                                  height: getBaseHeight() * CGFloat(i) + getExtendHeight())
-            mlayer.path = CGMutablePath();
-            mlayer.setNeedsDisplay();
-            self.mountain_layers.append(mlayer);
-            self.layer?.addSublayer(mlayer);
-        }
         self.layer?.setNeedsDisplay()
-
-        self.addSubview(verses_label);
-        self.addSubview(color_label);
-        self.addSubview(poem_label);
-        self.addSubview(author_label);
         
-        self.setWaveColor(name: "晶石紫", color: NSColor(red: 31.0/255, green: 32.0/255, blue: 64.0/255, alpha: 1.0))
+        self.addSubview(self.verses_view)
+        self.addSubview(self.color_label);
         
-        self.configVersesStyle()
+        self.load_wave_colors()
+        self.setRandomWaveColor()
+        
+        self.load_verses()
+        let verses = verses_list.randomElement() ?? Verses.defaultVerses
+        self.verses_view.setVerses(verses: verses.verses, from: verses.title, by: verses.author)
+        
         self.configColorStyle()
+        
     }
 
     @available(*, unavailable)
@@ -106,36 +131,34 @@ class jizhi_saverView: ScreenSaverView {
             recordWidthHeight()
             first_run = false
             
-            for i in 0..<5 {
-                let mlayer = mountain_layers[i];
-                mlayer.frame = CGRect(x: 0, y: 0, width: frame.width,
-                                      height: getBaseHeight() * CGFloat(i) + getExtendHeight())
-            }
-            
             growMountains()
-            configVersesStyle()
             configColorStyle()
         }
         
         
         for i in 0..<5 {
             let m = mountains[i];
-            let layer = mountain_layers[i];
-            drawMountain(layer: layer, mountain: m)
+            drawMountain(mountain: m)
         }
     }
     
-    func setWaveColor(name: String, color: NSColor) {
-        color_name = Array(name).map(String.init).joined(separator: "\n")
-        wave_color = color
+    func setRandomWaveColor() {
+        if wave_colors.count > 0 {
+            var color = wave_colors.randomElement()!
+            while (is_dark_mode && !color.darkSuitable) || (!is_dark_mode && !color.lightSuitable) {
+                color = wave_colors.randomElement()!
+            }
+            setWaveColor(color)
+        }else{
+            setWaveColor(.defaultColor)
+        }
+    }
+    
+    func setWaveColor(_ color: WaveColor) {
+        self.wave_color = color;
         growMountains()
     }
     
-    func setVerses(verses: String, by: String, from: String) {
-        verses_str = verses;
-        poem_str = from;
-        author_str = by;
-    }
     
     func recordWidthHeight() {
         width = frame.width;
@@ -150,9 +173,9 @@ class jizhi_saverView: ScreenSaverView {
         return frame.height * 200.0 / 900.0;
     }
     
-    func drawMountain(layer: CAShapeLayer, mountain: Mountain) {
+    func drawMountain(mountain: Mountain) {
         var xoff: CGFloat = 0;
-        layer.fillColor = mountain.c.cgColor;
+        let layer = mountain.layer;
         let p = CGMutablePath();
         
         p5noiseDetail(2, 1.3);
@@ -179,77 +202,29 @@ class jizhi_saverView: ScreenSaverView {
     }
     
     func growMountains() {
-        mountains = [];
+        let is_first_run = (mountains.count == 0);
+        let original_color = wave_color.getColor();
         for i in 0..<5 {
-            let c = NSColor(red:wave_color.redComponent,
-                            green: wave_color.greenComponent,
-                            blue: wave_color.blueComponent,
+            
+            let c = NSColor(red: original_color.redComponent,
+                            green: original_color.greenComponent,
+                            blue: original_color.blueComponent,
                             alpha: 1 - 0.2 * CGFloat(i))
             let h = getBaseHeight() * CGFloat(i);
-            let mountain = Mountain(color: c, y: h);
-            mountains.append(mountain)
+            
+            let mlayer = is_first_run ? CAShapeLayer() : mountains[i].layer;
+            mlayer.frame = CGRect(x: 0, y: 0, width: frame.width,
+                                  height: h + getExtendHeight())
+            mlayer.fillColor = c.cgColor;
+            mlayer.setNeedsDisplay();
+            let m = Mountain(color: c, y: h, layer: mlayer);
+            if is_first_run {
+                mountains.append(m)
+                self.layer?.addSublayer(m.layer)
+            }else{
+                mountains[i] = m;
+            }
         }
-    }
-
-    func configVersesStyle() {
-        let font_size_verses = min(0.04 * width, 30 + 0.01 * width);
-        verses_label.frame = CGRect(origin: CGPoint(x: 0, y: 0.7 * height),
-                                    size: CGSize(width: width, height: font_size_verses*1.5))
-        verses_label.backgroundColor = .none;
-        
-        let paraph = NSMutableParagraphStyle()
-        paraph.alignment = .center
-        paraph.lineHeightMultiple = 1
-        let attrs: [NSAttributedString.Key : Any] = [
-            NSAttributedString.Key.font: NSFont(name: font_name, size: font_size_verses) ?? .systemFont(ofSize: font_size_verses),
-            NSAttributedString.Key.paragraphStyle: paraph,
-        ]
-        verses_label.attributedStringValue = NSAttributedString(string: verses_str, attributes: attrs);
-        verses_label.isBezeled = false
-        
-        verses_label.isEditable = false
-        verses_label.alignment = .center
-        verses_label.textColor = is_dark_mode ? Constants.verses_text_dark : Constants.verses_text_light;
-        verses_label.autoresizingMask = [.width, .minYMargin, .maxYMargin]
-        
-        let font_size_poem = min(10+0.01*width, 0.022*width)
-        
-        poem_label.backgroundColor = .none
-        let attrs1: [NSAttributedString.Key : Any] = [
-            NSAttributedString.Key.font: NSFont(name: font_name, size: font_size_poem) ?? .systemFont(ofSize: font_size_poem),
-            NSAttributedString.Key.paragraphStyle: paraph,
-        ]
-        poem_label.attributedStringValue = NSAttributedString(string: poem_str, attributes: attrs1);
-        poem_label.isBezeled = false
-        poem_label.isEditable = false
-        poem_label.alignment = .center
-        poem_label.textColor = is_dark_mode ? Constants.verses_text_dark : Constants.verses_text_light;
-        poem_label.sizeToFit()
-        
-        let font_size_author = font_size_poem*0.67;
-        author_label.backgroundColor = Constants.author_background
-        let attrs2: [NSAttributedString.Key : Any] = [
-            NSAttributedString.Key.font: NSFont(name: font_name, size: font_size_author) ?? .systemFont(ofSize: font_size_author),
-            NSAttributedString.Key.paragraphStyle: paraph,
-        ]
-        author_label.attributedStringValue = NSAttributedString(string: author_str, attributes: attrs2);
-        author_label.isBezeled = false
-        author_label.isEditable = false
-        author_label.alignment = .center
-        author_label.textColor = .white
-        author_label.layer?.cornerRadius = 3
-        author_label.sizeToFit()
-        
-        let poem_y = 0.7 * height - font_size_verses*1;
-        let poem_height = poem_label.frame.height;
-        let poem_width = poem_label.frame.width;
-//        let author_height = author_label.frame.height;
-        let author_width = author_label.frame.width;
-        let total_width = author_width + poem_width;
-        poem_label.frame.origin = CGPoint(x: width/2 - total_width/2 , y: poem_y)
-        let a : CGFloat = width/2 - total_width/2 + poem_width;
-        let b : CGFloat =  poem_y + poem_height * 0.1;
-        author_label.frame.origin = CGPoint(x: a, y: b);
     }
     
     func configColorStyle() {
@@ -265,11 +240,67 @@ class jizhi_saverView: ScreenSaverView {
             NSAttributedString.Key.font: NSFont(name: font_name, size: font_size) ?? .systemFont(ofSize: font_size),
             NSAttributedString.Key.paragraphStyle: paraph,
         ]
-        color_label.attributedStringValue = NSAttributedString(string: color_name,
+        color_label.attributedStringValue = NSAttributedString(string: wave_color.getNameLines(),
                                                                attributes: attrs);
         color_label.isBezeled = false
         color_label.isEditable = false
         color_label.textColor = is_dark_mode ? Constants.color_text_dark : Constants.color_text_light;
         color_label.autoresizingMask = [.minXMargin, .height]
+    }
+    
+    func load_wave_colors() {
+        if let path = Bundle(for: jizhi_saverView.self).path(forResource: "wavesColors", ofType: "json") {
+            do {
+                let data = try Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe)
+                let jsonResult = try JSONSerialization.jsonObject(with: data, options: .mutableLeaves)
+                if let jsonResult = jsonResult as? Array<AnyObject> {
+                    for colorResult in jsonResult {
+                        if let color = colorResult as? Dictionary<String, AnyObject> {
+                            if let name = color["name"] as? String,
+                               let lightSuitable = color["lightSuitable"] as? Bool,
+                               let RGB = color["RGB"] as? Array<Int>,
+                               let darkSuitable = color["darkSuitable"] as? Bool {
+                                let color = WaveColor(name: name, red: RGB[0], green: RGB[1], blue: RGB[2], lightSuitable: lightSuitable, darkSuitable: darkSuitable)
+                                wave_colors.append(color);
+                            }
+                        }
+                    }
+                }
+            } catch {
+                NSLog("jizhi: error11")
+                wave_colors.append(.defaultColor)
+            }
+        }else{
+            NSLog("jizhi: error21")
+            wave_colors.append(.defaultColor)
+        }
+    }
+    
+    func load_verses() {
+        if let path = Bundle(for: jizhi_saverView.self).path(forResource: "shici", ofType: "json") {
+            do {
+                let data = try Data(contentsOf: URL(fileURLWithPath: path), options: .mappedIfSafe)
+                let jsonResult = try JSONSerialization.jsonObject(with: data, options: .mutableLeaves)
+                if let jsonResult = jsonResult as? Array<AnyObject> {
+                    for shiciResult in jsonResult {
+                        if let shici = shiciResult as? Dictionary<String, AnyObject> {
+                            if let content = shici["content"] as? String,
+                               let origin = shici["origin"] as? Dictionary<String, AnyObject> {
+                                if let title = origin["title"] as? String,
+                                   let author = origin["author"] as? String{
+                                    verses_list.append(Verses(verses: content, title: title, author: author))
+                                }
+                            }
+                        }
+                    }
+                }
+            } catch {
+                NSLog("jizhi: error12")
+                verses_list.append(.defaultVerses)
+            }
+        }else{
+            NSLog("jizhi: error22")
+            verses_list.append(.defaultVerses)
+        }
     }
 }
