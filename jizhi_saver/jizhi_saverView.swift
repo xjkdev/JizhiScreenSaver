@@ -23,7 +23,6 @@ class jizhi_saverView: ScreenSaverView {
     }
     
     private var mountains: [Mountain] = [];
-    private var backgound_layer: CAShapeLayer? = nil;
     private var mountain_layers: [CAShapeLayer] = [];
     private var height: CGFloat = 0.0;
     private var width: CGFloat = 0.0;
@@ -61,14 +60,31 @@ class jizhi_saverView: ScreenSaverView {
         
         super.init(frame: frame, isPreview: isPreview)
         
+        self.recordWidthHeight()
+        
+        self.wantsLayer = true;
+        
+        let layer = CALayer()
+        layer.frame = frame
+        layer.backgroundColor = is_dark_mode ? Constants.background_dark.cgColor : Constants.background_light.cgColor;
+        self.layer = layer
+        for i in 0..<5 {
+            let mlayer = CAShapeLayer()
+            mlayer.frame = CGRect(x: 0, y: 0, width: frame.width,
+                                  height: getBaseHeight() * CGFloat(i) + getExtendHeight())
+            mlayer.path = CGMutablePath();
+            mlayer.setNeedsDisplay();
+            self.mountain_layers.append(mlayer);
+            self.layer?.addSublayer(mlayer);
+        }
+        self.layer?.setNeedsDisplay()
+
         self.addSubview(verses_label);
         self.addSubview(color_label);
         self.addSubview(poem_label);
         self.addSubview(author_label);
         
         self.setWaveColor(name: "晶石紫", color: NSColor(red: 31.0/255, green: 32.0/255, blue: 64.0/255, alpha: 1.0))
-        
-        self.recordWidthHeight()
         
         self.configVersesStyle()
         self.configColorStyle()
@@ -79,30 +95,34 @@ class jizhi_saverView: ScreenSaverView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - Lifecycle
-    override func draw(_ rect: NSRect) {
+    override func startAnimation() {
+        self.animationTimeInterval = 1.0/30;
+    }
+
+    override func animateOneFrame() {
+        super.animateOneFrame()
+        
         if first_run || width != frame.width || height != frame.height{
             recordWidthHeight()
             first_run = false
+            
+            for i in 0..<5 {
+                let mlayer = mountain_layers[i];
+                mlayer.frame = CGRect(x: 0, y: 0, width: frame.width,
+                                      height: getBaseHeight() * CGFloat(i) + getExtendHeight())
+            }
             
             growMountains()
             configVersesStyle()
             configColorStyle()
         }
         
-        drawBackground();
         
-        for m in mountains {
-            drawMountain(mountain: m)
+        for i in 0..<5 {
+            let m = mountains[i];
+            let layer = mountain_layers[i];
+            drawMountain(layer: layer, mountain: m)
         }
-        
-    }
-
-    override func animateOneFrame() {
-        super.animateOneFrame()
-        // Update the "state" of the screensaver in this function
-        self.animationTimeInterval = 1.0/30;
-        setNeedsDisplay(NSRect(x: 0, y: 0, width: frame.width, height: getBaseHeight() * 5 + getExtendHeight()))
     }
     
     func setWaveColor(name: String, color: NSColor) {
@@ -130,28 +150,10 @@ class jizhi_saverView: ScreenSaverView {
         return frame.height * 200.0 / 900.0;
     }
     
-    func drawBackground() {
-        if backgound_layer == nil {
-            backgound_layer = CAShapeLayer()
-        }
-        let layer = backgound_layer!
-        
-//        let background = NSBezierPath(rect: bounds)
-        if is_dark_mode {
-            layer.fillColor = Constants.background_dark.cgColor;
-//            Constants.background_dark.setFill()
-        } else {
-            layer.fillColor = Constants.background_light.cgColor;
-//            Constants.background_light.setFill()
-        }
-//        background.fill()
-    }
-    
-    
-    func drawMountain(mountain: Mountain) {
+    func drawMountain(layer: CAShapeLayer, mountain: Mountain) {
         var xoff: CGFloat = 0;
-        let p = NSBezierPath()
-        mountain.c.setFill()
+        layer.fillColor = mountain.c.cgColor;
+        let p = CGMutablePath();
         
         p5noiseDetail(2, 1.3);
         
@@ -162,18 +164,18 @@ class jizhi_saverView: ScreenSaverView {
             if x == 0 {
                 p.move(to: NSPoint(x: x, y: y))
             }else{
-                p.line(to: NSPoint(x: x, y: y))
+                p.addLine(to: NSPoint(x: x, y: y))
             }
-
 
             xoff += 0.08;
         }
-        p.line(to: NSPoint(x: width + 100, y: 0));
-        p.line(to: NSPoint(x: 0, y: 0));
-        p.close()
-        p.fill()
+        p.addLine(to: NSPoint(x: width + 100, y: 0));
+        p.addLine(to: NSPoint(x: 0, y: 0));
+        p.closeSubpath()
 
         mountain.t += 0.005;
+        layer.path = p;
+        layer.didChangeValue(forKey: "path")
     }
     
     func growMountains() {
