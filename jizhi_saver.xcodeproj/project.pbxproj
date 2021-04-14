@@ -7,18 +7,42 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		E1D7F2BC261C29AB00FF0CC3 /* jizhi_saverView.h in Headers */ = {isa = PBXBuildFile; fileRef = E1D7F2BB261C29AB00FF0CC3 /* jizhi_saverView.h */; };
-		E1D7F2BE261C29AB00FF0CC3 /* jizhi_saverView.m in Sources */ = {isa = PBXBuildFile; fileRef = E1D7F2BD261C29AB00FF0CC3 /* jizhi_saverView.m */; };
+		E11CA5132621A74B00812157 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11CA5122621A74B00812157 /* AppDelegate.swift */; };
+		E11CA5152621A74B00812157 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11CA5142621A74B00812157 /* ViewController.swift */; };
+		E11CA5172621A74F00812157 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E11CA5162621A74F00812157 /* Assets.xcassets */; };
+		E11CA51A2621A74F00812157 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E11CA5182621A74F00812157 /* Main.storyboard */; };
+		E18A82892625BC9C005C2495 /* jizhi_saverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D7F2C6261C2A2500FF0CC3 /* jizhi_saverView.swift */; };
+		E18A828C2625BCA0005C2495 /* PerlinNoise.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FA699626217E2B006F7737 /* PerlinNoise.swift */; };
+		E1D7F2C7261C2A2600FF0CC3 /* jizhi_saverView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1D7F2C6261C2A2500FF0CC3 /* jizhi_saverView.swift */; };
+		E1FA699726217E2B006F7737 /* PerlinNoise.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FA699626217E2B006F7737 /* PerlinNoise.swift */; };
+		E1FA699B26218A2B006F7737 /* shici.json in Resources */ = {isa = PBXBuildFile; fileRef = E1FA699926218A2B006F7737 /* shici.json */; };
+		E1FA699C26218A2B006F7737 /* wavesColors.json in Resources */ = {isa = PBXBuildFile; fileRef = E1FA699A26218A2B006F7737 /* wavesColors.json */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		E11CA5102621A74B00812157 /* debugview.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = debugview.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E11CA5122621A74B00812157 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		E11CA5142621A74B00812157 /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		E11CA5162621A74F00812157 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		E11CA5192621A74F00812157 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
+		E11CA51B2621A74F00812157 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E11CA51C2621A74F00812157 /* debugview.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = debugview.entitlements; sourceTree = "<group>"; };
 		E1D7F2B8261C29AB00FF0CC3 /* jizhi_saver.saver */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = jizhi_saver.saver; sourceTree = BUILT_PRODUCTS_DIR; };
-		E1D7F2BB261C29AB00FF0CC3 /* jizhi_saverView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = jizhi_saverView.h; sourceTree = "<group>"; };
-		E1D7F2BD261C29AB00FF0CC3 /* jizhi_saverView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = jizhi_saverView.m; sourceTree = "<group>"; };
 		E1D7F2BF261C29AB00FF0CC3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E1D7F2C6261C2A2500FF0CC3 /* jizhi_saverView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = jizhi_saverView.swift; sourceTree = "<group>"; };
+		E1FA699626217E2B006F7737 /* PerlinNoise.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PerlinNoise.swift; sourceTree = "<group>"; };
+		E1FA699926218A2B006F7737 /* shici.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = shici.json; sourceTree = "<group>"; };
+		E1FA699A26218A2B006F7737 /* wavesColors.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = wavesColors.json; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		E11CA50D2621A74B00812157 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E1D7F2B5261C29AB00FF0CC3 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -29,10 +53,24 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		E11CA5112621A74B00812157 /* debugview */ = {
+			isa = PBXGroup;
+			children = (
+				E11CA5122621A74B00812157 /* AppDelegate.swift */,
+				E11CA5142621A74B00812157 /* ViewController.swift */,
+				E11CA5162621A74F00812157 /* Assets.xcassets */,
+				E11CA5182621A74F00812157 /* Main.storyboard */,
+				E11CA51B2621A74F00812157 /* Info.plist */,
+				E11CA51C2621A74F00812157 /* debugview.entitlements */,
+			);
+			path = debugview;
+			sourceTree = "<group>";
+		};
 		E1D7F2AE261C29AB00FF0CC3 = {
 			isa = PBXGroup;
 			children = (
 				E1D7F2BA261C29AB00FF0CC3 /* jizhi_saver */,
+				E11CA5112621A74B00812157 /* debugview */,
 				E1D7F2B9261C29AB00FF0CC3 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -41,6 +79,7 @@
 			isa = PBXGroup;
 			children = (
 				E1D7F2B8261C29AB00FF0CC3 /* jizhi_saver.saver */,
+				E11CA5102621A74B00812157 /* debugview.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -48,9 +87,11 @@
 		E1D7F2BA261C29AB00FF0CC3 /* jizhi_saver */ = {
 			isa = PBXGroup;
 			children = (
-				E1D7F2BB261C29AB00FF0CC3 /* jizhi_saverView.h */,
-				E1D7F2BD261C29AB00FF0CC3 /* jizhi_saverView.m */,
+				E1FA699926218A2B006F7737 /* shici.json */,
+				E1FA699A26218A2B006F7737 /* wavesColors.json */,
 				E1D7F2BF261C29AB00FF0CC3 /* Info.plist */,
+				E1D7F2C6261C2A2500FF0CC3 /* jizhi_saverView.swift */,
+				E1FA699626217E2B006F7737 /* PerlinNoise.swift */,
 			);
 			path = jizhi_saver;
 			sourceTree = "<group>";
@@ -62,13 +103,29 @@
 			isa = PBXHeadersBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E1D7F2BC261C29AB00FF0CC3 /* jizhi_saverView.h in Headers */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXHeadersBuildPhase section */
 
 /* Begin PBXNativeTarget section */
+		E11CA50F2621A74B00812157 /* debugview */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = E11CA51F2621A74F00812157 /* Build configuration list for PBXNativeTarget "debugview" */;
+			buildPhases = (
+				E11CA50C2621A74B00812157 /* Sources */,
+				E11CA50D2621A74B00812157 /* Frameworks */,
+				E11CA50E2621A74B00812157 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = debugview;
+			productName = debugview;
+			productReference = E11CA5102621A74B00812157 /* debugview.app */;
+			productType = "com.apple.product-type.application";
+		};
 		E1D7F2B7261C29AB00FF0CC3 /* jizhi_saver */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = E1D7F2C2261C29AB00FF0CC3 /* Build configuration list for PBXNativeTarget "jizhi_saver" */;
@@ -93,10 +150,15 @@
 		E1D7F2AF261C29AB00FF0CC3 /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 1240;
 				LastUpgradeCheck = 1240;
 				TargetAttributes = {
+					E11CA50F2621A74B00812157 = {
+						CreatedOnToolsVersion = 12.4;
+					};
 					E1D7F2B7261C29AB00FF0CC3 = {
 						CreatedOnToolsVersion = 12.4;
+						LastSwiftMigration = 1240;
 					};
 				};
 			};
@@ -114,32 +176,109 @@
 			projectRoot = "";
 			targets = (
 				E1D7F2B7261C29AB00FF0CC3 /* jizhi_saver */,
+				E11CA50F2621A74B00812157 /* debugview */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		E11CA50E2621A74B00812157 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E11CA5172621A74F00812157 /* Assets.xcassets in Resources */,
+				E11CA51A2621A74F00812157 /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E1D7F2B6261C29AB00FF0CC3 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				E1FA699C26218A2B006F7737 /* wavesColors.json in Resources */,
+				E1FA699B26218A2B006F7737 /* shici.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		E11CA50C2621A74B00812157 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E18A828C2625BCA0005C2495 /* PerlinNoise.swift in Sources */,
+				E11CA5152621A74B00812157 /* ViewController.swift in Sources */,
+				E18A82892625BC9C005C2495 /* jizhi_saverView.swift in Sources */,
+				E11CA5132621A74B00812157 /* AppDelegate.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		E1D7F2B4261C29AB00FF0CC3 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E1D7F2BE261C29AB00FF0CC3 /* jizhi_saverView.m in Sources */,
+				E1D7F2C7261C2A2600FF0CC3 /* jizhi_saverView.swift in Sources */,
+				E1FA699726217E2B006F7737 /* PerlinNoise.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
+/* Begin PBXVariantGroup section */
+		E11CA5182621A74F00812157 /* Main.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				E11CA5192621A74F00812157 /* Base */,
+			);
+			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
 /* Begin XCBuildConfiguration section */
+		E11CA51D2621A74F00812157 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = debugview/debugview.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = debugview/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.xjkdev.debugview;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		E11CA51E2621A74F00812157 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = debugview/debugview.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = debugview/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.xjkdev.debugview;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
 		E1D7F2C0261C29AB00FF0CC3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -254,12 +393,21 @@
 		E1D7F2C3261C29AB00FF0CC3 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = jizhi_saver/Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Screen Savers";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.xjkdev.jizhi-saver";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "jizhi_saver-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = saver;
 			};
 			name = Debug;
@@ -267,12 +415,20 @@
 		E1D7F2C4261C29AB00FF0CC3 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = jizhi_saver/Info.plist;
 				INSTALL_PATH = "$(HOME)/Library/Screen Savers";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = "com.xjkdev.jizhi-saver";
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "jizhi_saver-Bridging-Header.h";
+				SWIFT_VERSION = 5.0;
 				WRAPPER_EXTENSION = saver;
 			};
 			name = Release;
@@ -280,6 +436,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		E11CA51F2621A74F00812157 /* Build configuration list for PBXNativeTarget "debugview" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E11CA51D2621A74F00812157 /* Debug */,
+				E11CA51E2621A74F00812157 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		E1D7F2B2261C29AB00FF0CC3 /* Build configuration list for PBXProject "jizhi_saver" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
