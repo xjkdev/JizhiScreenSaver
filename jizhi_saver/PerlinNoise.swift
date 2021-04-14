@@ -21,7 +21,11 @@ func scaled_cosine(_ i: Double) -> Double {return  0.5 * (1.0 - cos(i * Double.p
 
 var perlin: [Double] = [Double](repeating: 0, count: PERLIN_SIZE + 1); // will be initialized lazily by noise() or noiseSeed()
 
-func p5noise(_ x: Double, _ y: Double=0.0, _ z: Double=0.0) -> Double{
+func p5noise<T:BinaryFloatingPoint>(_ x: T, _ y: T=0.0, _ z: T=0.0) -> T {
+    return T(p5noise_impl(Double(x),Double(y),Double(z)))
+}
+
+private func p5noise_impl(_ x: Double, _ y: Double=0.0, _ z: Double=0.0) -> Double{
     var x = x;
     var y = y;
     var z = z;
@@ -57,7 +61,7 @@ func p5noise(_ x: Double, _ y: Double=0.0, _ z: Double=0.0) -> Double{
     
     var n1:Double, n2:Double, n3:Double;
     
-    for o in 0..<perlin_octaves {
+    for _ in 0..<perlin_octaves {
         var of = xi + yi<<PERLIN_YWRAPB + zi<<PERLIN_ZWRAPB;
         
         rxf = scaled_cosine(xf);
@@ -112,7 +116,11 @@ func p5noiseDetail(_ lod: Int, _ falloff:Double) {
   }
 };
 
-func p5map(n: Double, start1: Double, stop1: Double, start2: Double, stop2: Double, withinBounds:Bool=false) -> Double {
+func p5map<T: BinaryFloatingPoint>(n: T, start1: T, stop1: T, start2: T, stop2: T, withinBounds:Bool=false) -> T {
+    return T(p5map_impl(n: Double(n), start1: Double(start1), stop1: Double(stop1), start2: Double(start2), stop2: Double(stop2), withinBounds: withinBounds))
+}
+
+private func p5map_impl(n: Double, start1: Double, stop1: Double, start2: Double, stop2: Double, withinBounds:Bool=false) -> Double {
   let newval = (n - start1) / (stop1 - start1) * (stop2 - start2) + start2;
   if (!withinBounds) {
     return newval;

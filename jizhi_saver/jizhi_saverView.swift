@@ -13,31 +13,45 @@ class jizhi_saverView: ScreenSaverView {
     
     private enum Constants {
         static let bundleId: String = "com.xjkdev.jizhi-saver";
+        static let background_light = NSColor(red: 230.0/255, green: 230.0/255, blue: 230.0/255, alpha: 1.0);
+        static let background_dark = NSColor(red: 50.0/255, green: 50.0/255, blue: 50.0/255, alpha: 1.0);
+        static let author_background = NSColor(red: 194.0/255, green: 0, blue: 0, alpha:1);
+        static let color_text_light = NSColor(red: 0, green: 0, blue: 0, alpha: 0.1);
+        static let color_text_dark = NSColor(red: 1, green: 1, blue: 1, alpha: 0.1);
+        static let verses_text_light = NSColor(red: 17.0/255, green: 17.0/255, blue: 17.0/255, alpha: 1);
+        static let verses_text_dark = NSColor(red: 1, green: 1, blue: 1, alpha: 1);
     }
     
-    var mountains: [Mountain] = [];
-    var height: Double = 0.0;
-    var width: Double = 0.0;
-    var extended_height : Double = 200.0;
-    var base_height: Double = 50.0;
-    var scale: Double = 2;
-    var first_run: Bool = true;
-    let verses_label = NSTextField();
-    let poem_label = NSTextField();
-    let author_label = NSTextField();
-    let color_label = NSTextField();
-    let background_light = NSColor(red: 230/255, green: 230/255, blue: 230/255, alpha: 1.0);
+    private var mountains: [Mountain] = [];
+    private var backgound_layer: CAShapeLayer? = nil;
+    private var mountain_layers: [CAShapeLayer] = [];
+    private var height: CGFloat = 0.0;
+    private var width: CGFloat = 0.0;
+    private var first_run: Bool = true;
+    private var is_dark_mode: Bool = false;
+    
+    private let verses_label = NSTextField();
+    private let poem_label = NSTextField();
+    private let author_label = NSTextField();
+    private let color_label = NSTextField();
+    
+    private var wave_color: NSColor = NSColor(red: 31.0/255, green: 32.0/255, blue: 64.0/255, alpha: 1.0);
+    private var color_name: String = "晶\n石\n紫";
+    private var font_name: String = "jiangxizhuokai-Regular";
+    private var verses_str: String = "况夜鸟、啼绝四更头，边声起。";
+    private var poem_str: String = "「满江红·代北燕南」";
+    private var author_str: String = "纳兰性德";
    
     class Mountain {
         let c : NSColor;
-        var y : Double=0.0;
-        var offset: Double=0.0;
-        var t : Double = 0.0;
+        var y : CGFloat=0.0;
+        var offset: CGFloat=0.0;
+        var t : CGFloat = 0.0;
         
-        init(color: NSColor, y: Double) {
+        init(color: NSColor, y: CGFloat) {
             self.c = color;
             self.y = y;
-            self.offset = Double.random(in: 100...200);
+            self.offset = CGFloat.random(in: 100...200);
             self.t = 0.0;
         }
     }
@@ -52,9 +66,12 @@ class jizhi_saverView: ScreenSaverView {
         self.addSubview(poem_label);
         self.addSubview(author_label);
         
-        self.configWidthHeight()
-        self.configVersesLabel()
-        self.configColorLabel()
+        self.setWaveColor(name: "晶石紫", color: NSColor(red: 31.0/255, green: 32.0/255, blue: 64.0/255, alpha: 1.0))
+        
+        self.recordWidthHeight()
+        
+        self.configVersesStyle()
+        self.configColorStyle()
     }
 
     @available(*, unavailable)
@@ -64,24 +81,20 @@ class jizhi_saverView: ScreenSaverView {
 
     // MARK: - Lifecycle
     override func draw(_ rect: NSRect) {
-        if first_run || width != Double(bounds.maxX - bounds.minX) || height != Double(bounds.maxY - bounds.minY){
-            configWidthHeight()
+        if first_run || width != frame.width || height != frame.height{
+            recordWidthHeight()
+            first_run = false
             
-            first_run = false;
-            let test_color = NSColor(red: 31.0/255, green: 32.0/255, blue: 64.0/255, alpha: 1.0)
-            mountains = jizhi_saverView.growMountains(height: height, color: test_color, base_height: base_height)
-            
-            configVersesLabel()
-            configColorLabel()
+            growMountains()
+            configVersesStyle()
+            configColorStyle()
         }
         
-        // Draw a single frame in this function
         drawBackground();
         
         for m in mountains {
             drawMountain(mountain: m)
         }
-        
         
     }
 
@@ -89,32 +102,61 @@ class jizhi_saverView: ScreenSaverView {
         super.animateOneFrame()
         // Update the "state" of the screensaver in this function
         self.animationTimeInterval = 1.0/30;
-        setNeedsDisplay(NSRect(x: bounds.minX, y: bounds.minY, width: bounds.maxX-bounds.minX, height: CGFloat(base_height*5 + extended_height*scale)))
+        setNeedsDisplay(NSRect(x: 0, y: 0, width: frame.width, height: getBaseHeight() * 5 + getExtendHeight()))
     }
     
-    func configWidthHeight() {
-        width = Double(bounds.maxX - bounds.minX);
-        height = Double(bounds.maxY - bounds.minY);
-        extended_height = height * 200.0 / 900.0;
-        base_height = height * 50.0 / 900.0;
+    func setWaveColor(name: String, color: NSColor) {
+        color_name = Array(name).map(String.init).joined(separator: "\n")
+        wave_color = color
+        growMountains()
+    }
+    
+    func setVerses(verses: String, by: String, from: String) {
+        verses_str = verses;
+        poem_str = from;
+        author_str = by;
+    }
+    
+    func recordWidthHeight() {
+        width = frame.width;
+        height = frame.height;
+    }
+    
+    func getBaseHeight() -> CGFloat {
+        return frame.height * 50.0 / 900.0;
+    }
+    
+    func getExtendHeight() -> CGFloat {
+        return frame.height * 200.0 / 900.0;
     }
     
     func drawBackground() {
-        let background = NSBezierPath(rect: bounds)
-        background_light.setFill()
-        background.fill()
+        if backgound_layer == nil {
+            backgound_layer = CAShapeLayer()
+        }
+        let layer = backgound_layer!
+        
+//        let background = NSBezierPath(rect: bounds)
+        if is_dark_mode {
+            layer.fillColor = Constants.background_dark.cgColor;
+//            Constants.background_dark.setFill()
+        } else {
+            layer.fillColor = Constants.background_light.cgColor;
+//            Constants.background_light.setFill()
+        }
+//        background.fill()
     }
     
     
     func drawMountain(mountain: Mountain) {
-        var xoff: Double = 0;
+        var xoff: CGFloat = 0;
         let p = NSBezierPath()
         mountain.c.setFill()
         
         p5noiseDetail(2, 1.3);
         
-        for x in stride(from: 0, through: width+25*scale, by: 25*scale) {
-            let yoff = p5map(n: p5noise(xoff + mountain.offset, mountain.t + mountain.offset), start1: 0, stop1: 1, start2: 0, stop2: extended_height);
+        for x in stride(from: 0, through: width+25, by: 25) {
+            let yoff = p5map(n: p5noise(xoff + mountain.offset, mountain.t + mountain.offset), start1: 0, stop1: 1, start2: 0, stop2: getExtendHeight());
             let y = mountain.y  + yoff;
 
             if x == 0 {
@@ -126,7 +168,7 @@ class jizhi_saverView: ScreenSaverView {
 
             xoff += 0.08;
         }
-        p.line(to: NSPoint(x: width + 100 * scale, y: 0));
+        p.line(to: NSPoint(x: width + 100, y: 0));
         p.line(to: NSPoint(x: 0, y: 0));
         p.close()
         p.fill()
@@ -134,61 +176,61 @@ class jizhi_saverView: ScreenSaverView {
         mountain.t += 0.005;
     }
     
-    static func growMountains(height: Double, color: NSColor, base_height: Double) -> [Mountain] {
-        var ret: [Mountain] = [];
+    func growMountains() {
+        mountains = [];
         for i in 0..<5 {
-            let c = NSColor(red:color.redComponent, green: color.greenComponent, blue: color.blueComponent, alpha: 1 - 0.2 * CGFloat(i))
-            let h = base_height * Double(i);
+            let c = NSColor(red:wave_color.redComponent,
+                            green: wave_color.greenComponent,
+                            blue: wave_color.blueComponent,
+                            alpha: 1 - 0.2 * CGFloat(i))
+            let h = getBaseHeight() * CGFloat(i);
             let mountain = Mountain(color: c, y: h);
-            ret.append(mountain)
+            mountains.append(mountain)
         }
-        return ret;
     }
 
-    func configVersesLabel() {
+    func configVersesStyle() {
         let font_size_verses = min(0.04 * width, 30 + 0.01 * width);
         verses_label.frame = CGRect(origin: CGPoint(x: 0, y: 0.7 * height),
-                                    size: CGSize(width: CGFloat(width), height: CGFloat(font_size_verses*1.5)))
+                                    size: CGSize(width: width, height: font_size_verses*1.5))
         verses_label.backgroundColor = .none;
         
         let paraph = NSMutableParagraphStyle()
         paraph.alignment = .center
+        paraph.lineHeightMultiple = 1
         let attrs: [NSAttributedString.Key : Any] = [
-            NSAttributedString.Key.font: NSFont(name: "jiangxizhuokai-Regular", size: CGFloat(font_size_verses))!,
+            NSAttributedString.Key.font: NSFont(name: font_name, size: font_size_verses) ?? .systemFont(ofSize: font_size_verses),
             NSAttributedString.Key.paragraphStyle: paraph,
         ]
-        verses_label.attributedStringValue = NSAttributedString(string: "况夜鸟、啼绝四更头，边声起。",
-                                                               attributes: attrs);
+        verses_label.attributedStringValue = NSAttributedString(string: verses_str, attributes: attrs);
         verses_label.isBezeled = false
         
         verses_label.isEditable = false
         verses_label.alignment = .center
-        verses_label.textColor = .black
+        verses_label.textColor = is_dark_mode ? Constants.verses_text_dark : Constants.verses_text_light;
         verses_label.autoresizingMask = [.width, .minYMargin, .maxYMargin]
         
         let font_size_poem = min(10+0.01*width, 0.022*width)
-        let poem_y = Double(0.7 * height - font_size_verses*1);
         
         poem_label.backgroundColor = .none
         let attrs1: [NSAttributedString.Key : Any] = [
-            NSAttributedString.Key.font: NSFont(name: "jiangxizhuokai-Regular", size: CGFloat(font_size_poem))!,
+            NSAttributedString.Key.font: NSFont(name: font_name, size: font_size_poem) ?? .systemFont(ofSize: font_size_poem),
             NSAttributedString.Key.paragraphStyle: paraph,
         ]
-        poem_label.attributedStringValue = NSAttributedString(string: "「满江红·代北燕南」",
-                                                               attributes: attrs1);
+        poem_label.attributedStringValue = NSAttributedString(string: poem_str, attributes: attrs1);
         poem_label.isBezeled = false
         poem_label.isEditable = false
         poem_label.alignment = .center
-        poem_label.textColor = .black
+        poem_label.textColor = is_dark_mode ? Constants.verses_text_dark : Constants.verses_text_light;
         poem_label.sizeToFit()
-       
-        author_label.backgroundColor = NSColor(red: 194/255, green: 0, blue: 0, alpha:1)
+        
+        let font_size_author = font_size_poem*0.67;
+        author_label.backgroundColor = Constants.author_background
         let attrs2: [NSAttributedString.Key : Any] = [
-            NSAttributedString.Key.font: NSFont(name: "jiangxizhuokai-Regular", size: CGFloat(font_size_poem)*0.67)!,
+            NSAttributedString.Key.font: NSFont(name: font_name, size: font_size_author) ?? .systemFont(ofSize: font_size_author),
             NSAttributedString.Key.paragraphStyle: paraph,
         ]
-        author_label.attributedStringValue = NSAttributedString(string: "纳兰性德",
-                                                               attributes: attrs2);
+        author_label.attributedStringValue = NSAttributedString(string: author_str, attributes: attrs2);
         author_label.isBezeled = false
         author_label.isEditable = false
         author_label.alignment = .center
@@ -196,35 +238,36 @@ class jizhi_saverView: ScreenSaverView {
         author_label.layer?.cornerRadius = 3
         author_label.sizeToFit()
         
-        let poem_height = Double(poem_label.frame.height);
-        let poem_width = Double(poem_label.frame.width);
-        let author_height = Double(author_label.frame.height);
-        let author_width = Double(author_label.frame.width);
-        let total_width = Double(author_width + poem_width);
+        let poem_y = 0.7 * height - font_size_verses*1;
+        let poem_height = poem_label.frame.height;
+        let poem_width = poem_label.frame.width;
+//        let author_height = author_label.frame.height;
+        let author_width = author_label.frame.width;
+        let total_width = author_width + poem_width;
         poem_label.frame.origin = CGPoint(x: width/2 - total_width/2 , y: poem_y)
-        let a:Double = width/2 - total_width/2 + poem_width;
-        let b:Double = poem_y + poem_height/2 - author_height/2;
+        let a : CGFloat = width/2 - total_width/2 + poem_width;
+        let b : CGFloat =  poem_y + poem_height * 0.1;
         author_label.frame.origin = CGPoint(x: a, y: b);
     }
     
-    func configColorLabel() {
+    func configColorStyle() {
         let font_size = min(0.15*width, 100 + 0.05*width);
         color_label.frame = CGRect(origin: CGPoint(x: width-0.9*font_size, y: 0),
-                                    size: CGSize(width: CGFloat(font_size), height: CGFloat(height)))
+                                    size: CGSize(width: font_size, height: height))
         color_label.backgroundColor = .none;
 
         let paraph = NSMutableParagraphStyle()
         paraph.alignment = .right
-        paraph.maximumLineHeight = CGFloat(font_size * 0.95);
+        paraph.maximumLineHeight = font_size * 0.95;
         let attrs: [NSAttributedString.Key : Any] = [
-            NSAttributedString.Key.font: NSFont(name: "jiangxizhuokai-Regular", size: CGFloat(font_size))!,
+            NSAttributedString.Key.font: NSFont(name: font_name, size: font_size) ?? .systemFont(ofSize: font_size),
             NSAttributedString.Key.paragraphStyle: paraph,
         ]
-        color_label.attributedStringValue = NSAttributedString(string: "晶\n石\n紫",
+        color_label.attributedStringValue = NSAttributedString(string: color_name,
                                                                attributes: attrs);
         color_label.isBezeled = false
         color_label.isEditable = false
-        color_label.textColor = NSColor(red: 0, green: 0, blue: 0, alpha: 0.1);
+        color_label.textColor = is_dark_mode ? Constants.color_text_dark : Constants.color_text_light;
         color_label.autoresizingMask = [.minXMargin, .height]
     }
 }
