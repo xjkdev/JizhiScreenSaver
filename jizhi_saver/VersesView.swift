@@ -43,15 +43,11 @@ class VersusView : NSView {
         self.is_dark_mode = isDarkMode;
         self.font_name = font
         
-        self.verses_str = verses
-        self.author_str = by
-        self.title_str = from
-        
         self.addSubview(verses_label);
         self.addSubview(title_label);
         self.addSubview(author_label);
         
-        resize_impl()
+        self.setVerses(verses: verses, from: from, by: by)
     }
     
     required init?(coder: NSCoder) {
@@ -93,18 +89,17 @@ class VersusView : NSView {
         title_label.textColor = is_dark_mode ? Constants.verses_text_dark : Constants.verses_text_light;
         title_label.sizeToFit()
         
-        
+        author_label.wantsLayer = true;
         author_label.backgroundColor = Constants.author_background
-        let attrs2: [NSAttributedString.Key : Any] = [
-            NSAttributedString.Key.font: NSFont(name: font_name, size: font_size_author) ?? .systemFont(ofSize: font_size_author),
-            NSAttributedString.Key.paragraphStyle: paraph,
-        ]
-        author_label.attributedStringValue = NSAttributedString(string: author_str, attributes: attrs2);
+        author_label.layer?.backgroundColor = Constants.author_background.cgColor
+        author_label.layer?.cornerRadius = 3
+        author_label.textColor = .white
+        author_label.font = NSFont(name: font_name, size: font_size_author) ?? .systemFont(ofSize: font_size_author)
+        author_label.stringValue = author_str
         author_label.isBezeled = false
         author_label.isEditable = false
         author_label.alignment = .center
-        author_label.textColor = .white
-        author_label.layer?.cornerRadius = 3
+        
         author_label.sizeToFit()
         
         
@@ -121,7 +116,7 @@ class VersusView : NSView {
     func setVerses(verses: String, from: String, by: String) {
         self.verses_str = verses
         self.author_str = by
-        self.title_str = from
+        self.title_str = "「" + from + "」"
         
         resize_impl()
     }

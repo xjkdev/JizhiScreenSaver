@@ -11,6 +11,7 @@
 		E11CA5152621A74B00812157 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E11CA5142621A74B00812157 /* ViewController.swift */; };
 		E11CA5172621A74F00812157 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E11CA5162621A74F00812157 /* Assets.xcassets */; };
 		E11CA51A2621A74F00812157 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E11CA5182621A74F00812157 /* Main.storyboard */; };
+		E16C80B926283CFF00967253 /* configSheet.swift in Sources */ = {isa = PBXBuildFile; fileRef = E16C80B826283CFF00967253 /* configSheet.swift */; };
 		E179DD442626E751001948E4 /* VersesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E179DD432626E751001948E4 /* VersesView.swift */; };
 		E179DD452626E751001948E4 /* VersesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E179DD432626E751001948E4 /* VersesView.swift */; };
 		E179DD482626F396001948E4 /* wavesColors.json in Resources */ = {isa = PBXBuildFile; fileRef = E1FA699A26218A2B006F7737 /* wavesColors.json */; };
@@ -31,6 +32,7 @@
 		E11CA5192621A74F00812157 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		E11CA51B2621A74F00812157 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E11CA51C2621A74F00812157 /* debugview.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = debugview.entitlements; sourceTree = "<group>"; };
+		E16C80B826283CFF00967253 /* configSheet.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = configSheet.swift; sourceTree = "<group>"; };
 		E179DD432626E751001948E4 /* VersesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VersesView.swift; sourceTree = "<group>"; };
 		E1D7F2B8261C29AB00FF0CC3 /* jizhi_saver.saver */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = jizhi_saver.saver; sourceTree = BUILT_PRODUCTS_DIR; };
 		E1D7F2BF261C29AB00FF0CC3 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -98,6 +100,7 @@
 				E1D7F2C6261C2A2500FF0CC3 /* jizhi_saverView.swift */,
 				E179DD432626E751001948E4 /* VersesView.swift */,
 				E1FA699626217E2B006F7737 /* PerlinNoise.swift */,
+				E16C80B826283CFF00967253 /* configSheet.swift */,
 			);
 			path = jizhi_saver;
 			sourceTree = "<group>";
@@ -230,6 +233,7 @@
 				E179DD442626E751001948E4 /* VersesView.swift in Sources */,
 				E1D7F2C7261C2A2600FF0CC3 /* jizhi_saverView.swift in Sources */,
 				E1FA699726217E2B006F7737 /* PerlinNoise.swift in Sources */,
+				E16C80B926283CFF00967253 /* configSheet.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -255,6 +259,7 @@
 				CODE_SIGN_ENTITLEMENTS = debugview/debugview.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = debugview/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -276,6 +281,7 @@
 				CODE_SIGN_ENTITLEMENTS = debugview/debugview.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = "";
 				INFOPLIST_FILE = debugview/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

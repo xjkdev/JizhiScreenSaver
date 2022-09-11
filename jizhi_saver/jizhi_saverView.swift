@@ -29,13 +29,15 @@ class jizhi_saverView: ScreenSaverView {
     private var is_dark_mode: Bool = false;
     
     private var verses_list: [Verses] = [];
-    private var verses_view: VersusView;
+    private var verses_view: VersusView? = nil;
     private let color_label = NSTextField();
     
     private var wave_colors: [WaveColor] = [];
     private var wave_color: WaveColor = WaveColor.defaultColor;
     
     private var font_name: String = "jiangxizhuokai-Regular";
+    
+    private var jinrishici_token: String = "";
     
     struct WaveColor {
         var name : String;
@@ -81,18 +83,11 @@ class jizhi_saverView: ScreenSaverView {
     
     // MARK: - Initialization
     override init?(frame: NSRect, isPreview: Bool) {
-        self.verses_view = VersusView(frame: NSRect(origin: CGPoint(x: 0, y: 0.7*frame.height),
-                                                    size: CGSize(width: frame.width, height: 0.05*frame.width)),
-                                      verses: Verses.defaultVerses.verses,
-                                      from: Verses.defaultVerses.title,
-                                      by: Verses.defaultVerses.author,
-                                      isDarkMode: is_dark_mode,
-                                      font: font_name)
-        self.verses_view.autoresizingMask = [.width, .minYMargin, .maxYMargin, .height]
-        
+       
         super.init(frame: frame, isPreview: isPreview)
         
         self.recordWidthHeight()
+        self.load_user_defaults()
         
         self.wantsLayer = true;
         let layer = CALayer()
@@ -101,18 +96,28 @@ class jizhi_saverView: ScreenSaverView {
         self.layer = layer
         self.layer?.setNeedsDisplay()
         
-        self.addSubview(self.verses_view)
-        self.addSubview(self.color_label);
-        
         self.load_wave_colors()
         self.setRandomWaveColor()
-        
         self.load_verses()
-        let verses = verses_list.randomElement() ?? Verses.defaultVerses
-        self.verses_view.setVerses(verses: verses.verses, from: verses.title, by: verses.author)
         
+       
+        let verses =  self.request_jinrishici() ?? self.verses_list.randomElement() ?? Verses.defaultVerses
+        
+        self.verses_view = VersusView(frame: NSRect(origin: CGPoint(x: 0, y: 0.7*frame.height),
+                                                    size: CGSize(width: frame.width, height: 0.05*frame.width)),
+                                      verses: verses.verses,
+                                      from: verses.title,
+                                      by: verses.author,
+                                      isDarkMode: is_dark_mode,
+                                      font: font_name)
+        
+        self.verses_view?.autoresizingMask = [.width, .minYMargin, .maxYMargin, .height]
+
+        self.growMountains()
         self.configColorStyle()
         
+        self.addSubview(self.verses_view!)
+        self.addSubview(self.color_label);
     }
 
     @available(*, unavailable)
@@ -120,14 +125,10 @@ class jizhi_saverView: ScreenSaverView {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func startAnimation() {
-        self.animationTimeInterval = 1.0/30;
-    }
-
     override func animateOneFrame() {
         super.animateOneFrame()
         
-        if first_run || width != frame.width || height != frame.height{
+        if width != frame.width || height != frame.height{
             recordWidthHeight()
             first_run = false
             
@@ -140,6 +141,68 @@ class jizhi_saverView: ScreenSaverView {
             let m = mountains[i];
             drawMountain(mountain: m)
         }
+    }
+    
+    func request_jinrishici() -> Verses?{
+        let session = URLSession.shared;
+//        // problem: make two request will lead to failure of the second.
+//        if jinrishici_token == "" {
+//            let semaphore = DispatchSemaphore(value: 0)
+//            let url = URL(string: "https://v2.jinrishici.com/token")!
+//            let task = session.dataTask(with: url) { [self](data, response, error) in
+//                guard let data = data else { return }
+//                do {
+//                    let jsonResult = try JSONSerialization.jsonObject(with: data, options:.mutableLeaves)
+//                    if let result = jsonResult as? Dictionary<String, String> {
+//                        if result["status"] == "success" {
+//                            self.jinrishici_token = result["data"] ?? ""
+//                        }
+//                    }
+//                } catch {
+//                    NSLog("Json decode error1")
+//                }
+//                print(self.jinrishici_token)
+//                if self.jinrishici_token != "" {
+//                    let bundleIdentifier = Bundle(for: jizhi_saverView.self).bundleIdentifier!
+//                    let database = ScreenSaverDefaults(forModuleWithName: bundleIdentifier) ?? UserDefaults()
+//                    database.setValue(self.jinrishici_token, forKey: "jinrishici_token")
+//                }
+//                semaphore.signal()
+//            }
+//            task.resume()
+//            _ = semaphore.wait(timeout: .distantFuture)
+//        }
+        
+        let semaphore = DispatchSemaphore(value: 0)
+        let url = URL(string: "https://v2.jinrishici.com/sentence")!
+        var url_req = URLRequest(url: url)
+        if self.jinrishici_token != "" {
+            url_req.setValue(self.jinrishici_token, forHTTPHeaderField: "X-User-Token")
+        }
+        
+        var ret_verses : Verses? = nil
+        let task1 = session.dataTask(with: url_req) {(data, response, error) in
+            guard let data = data else { return }
+            do {
+                let jsonResult = try JSONSerialization.jsonObject(with: data, options:.mutableLeaves)
+                if let result = jsonResult as? Dictionary<String, Any> {
+                    if let status = result["status"] as? String, let data = result["data"] as? Dictionary<String, Any>{
+                        if status == "success" {
+                            ret_verses = jizhi_saverView.decodeVerses(from: data)
+                            if ret_verses != nil {
+                                NSLog("jinrishici: %@", ret_verses!.verses)
+                            }
+                        }
+                    }
+                }
+            } catch {
+                NSLog("Json decode error2")
+            }
+            semaphore.signal()
+        }
+        task1.resume()
+        _ = semaphore.wait(timeout: .distantFuture)
+        return ret_verses
     }
     
     func setRandomWaveColor() {
@@ -198,7 +261,7 @@ class jizhi_saverView: ScreenSaverView {
 
         mountain.t += 0.005;
         layer.path = p;
-        layer.didChangeValue(forKey: "path")
+        layer.didChangeValue(for: \.path)
     }
     
     func growMountains() {
@@ -224,12 +287,13 @@ class jizhi_saverView: ScreenSaverView {
             }else{
                 mountains[i] = m;
             }
+            drawMountain(mountain: m)
         }
     }
     
     func configColorStyle() {
         let font_size = min(0.15*width, 100 + 0.05*width);
-        color_label.frame = CGRect(origin: CGPoint(x: width-0.9*font_size, y: 0),
+        color_label.frame = CGRect(origin: CGPoint(x: width-0.95*font_size, y: 0),
                                     size: CGSize(width: font_size, height: height))
         color_label.backgroundColor = .none;
 
@@ -283,14 +347,8 @@ class jizhi_saverView: ScreenSaverView {
                 let jsonResult = try JSONSerialization.jsonObject(with: data, options: .mutableLeaves)
                 if let jsonResult = jsonResult as? Array<AnyObject> {
                     for shiciResult in jsonResult {
-                        if let shici = shiciResult as? Dictionary<String, AnyObject> {
-                            if let content = shici["content"] as? String,
-                               let origin = shici["origin"] as? Dictionary<String, AnyObject> {
-                                if let title = origin["title"] as? String,
-                                   let author = origin["author"] as? String{
-                                    verses_list.append(Verses(verses: content, title: title, author: author))
-                                }
-                            }
+                        if let shici = shiciResult as? Dictionary<String, AnyObject>, let verses = jizhi_saverView.decodeVerses(from: shici) {
+                            verses_list.append(verses)
                         }
                     }
                 }
@@ -302,5 +360,31 @@ class jizhi_saverView: ScreenSaverView {
             NSLog("jizhi: error22")
             verses_list.append(.defaultVerses)
         }
+    }
+    
+    func load_user_defaults() {
+        let bundleIdentifier = Bundle(for: jizhi_saverView.self).bundleIdentifier!
+        var database : UserDefaults = UserDefaults()
+        if let mainbundleid = Bundle.main.bundleIdentifier, bundleIdentifier != mainbundleid {
+            database = ScreenSaverDefaults(forModuleWithName: bundleIdentifier)!
+        }
+        
+//        is_dark_mode = database.bool(forKey: "is_dark_mode")
+//        font_name = database.string(forKey: "font_name") ?? NSFont.systemFont(ofSize: 1).fontName
+//        jinrishici_token = database.string(forKey: "jinrishici_token") ?? ""
+        
+    }
+    
+    
+    static func decodeVerses(from dictionary: Dictionary<String, Any>) -> Verses?{
+        if let content = dictionary["content"] as? String,
+           let origin = dictionary["origin"] as? Dictionary<String, AnyObject> {
+            if let title = origin["title"] as? String,
+               let author = origin["author"] as? String{
+                return Verses(verses: content, title: title, author: author)
+            }
+        }
+        
+        return nil;
     }
 }
